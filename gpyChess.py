@@ -270,6 +270,25 @@ class Board:
             self.string = string_i
         self.splitString = self.stringToArray()
 
+# initial board        
 b1 = Board()
 b1.piecesFromBoardStrings()
 b1.getAllPossibleMoves()
+
+# TODO: generate board strings from pieces / moves
+# TODO: rethink data structs
+
+# TODO: test rooks possible moves
+# TODO: test knights possible moves
+# TODO: test bishops possible moves
+# TODO: test kings possible moves
+# TODO: test queens possible moves
+
+# TODO: test if move is check
+# TODO: test if move is mate
+
+# TODO: test pawn move - should generate new board
+# TODO: test pawn captures - should generate new board
+
+# TODO: test queen move
+# TODO: test queen captures
