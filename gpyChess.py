@@ -34,9 +34,40 @@ class Piece:
 class Board:
     pieces = list()
 #    pieces = ['p','p','p','p','p','p','p','p','r','n','b','q','k','b','n','r','P','P','P','P','P','P','P','P','R','N','B','Q','K','B','N','R']
-    def evaluatePawn(Piece):
-    # is starting position?
-        return None
+
+    # pawns are the soul of chess
+    def evaluatePawn(self,pawn):        
+        print('evaluating moves for '+str(pawn.color)+' (' + str(pawn.x) +','+str(pawn.y) + ')')
+        # make a dict: {pos: set(moves)}
+        px = pawn.x
+        py = pawn.y
+        pcolor = pawn.color
+        pos = str(px)+','+str(py) # should be a tuple?
+        moves = set()
+        ev = {pos:moves}
+        m = 1
+        # check edges
+        if pcolor == 'w': # go backwards            
+            m = -1
+        # is starting position?        
+        # check up 2        
+        # check forward 1
+        tx = px + m
+        thisCell = self.splitStrings[tx][py]
+        if thisCell == '.':
+            moves.add( str(tx) + ',' + str(py) )        
+        # check left diagonal
+        tx = px + m
+        ty = py - 1
+        thisCell = self.splitStrings[tx][ty]
+        if thisCell != '.':
+            moves.add( str(tx) + ',' + str(ty) )        
+        ty = py + 1
+        if thisCell != '.':
+            moves.add( str(tx) + ',' + str(ty) )                    
+        # check right diagonal        
+        print(ev)
+        return ev
 
     def evaluateRook(self,rook):
         print('evaluating moves for (' + str(rook.x) +','+str(rook.y) + ')')
@@ -64,7 +95,7 @@ class Board:
         # down
         # left
         # right
-        return None
+        return moves
 
     def evaluateKnight():
         return None
@@ -117,14 +148,15 @@ class Board:
             pcolor = piece.color
             print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
 
+    # -------------------------
     def getAllPossibleMoves(self):
+        moves = list()
         for piece in self.pieces:
             pType = piece.type
             px = piece.x
             py = piece.y
             pcolor = piece.color
             print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
-            moves = list()
             # rook
             if pType.lower() == 'r':
                 self.evaluateRook(piece)
@@ -133,8 +165,11 @@ class Board:
             # queen
             # king
             # pawn
-            for move in moves:
-                print(move)
+            if pType.lower() == 'p':
+                moves.append(self.evaluatePawn(piece))
+            
+        for move in moves:
+            print(move)
             
     def __init__(self, string_i = ''):
         if string_i == '':
