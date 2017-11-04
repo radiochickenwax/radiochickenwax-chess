@@ -37,6 +37,15 @@ class Board:
     pieces = list()
 #    pieces = ['p','p','p','p','p','p','p','p','r','n','b','q','k','b','n','r','P','P','P','P','P','P','P','P','R','N','B','Q','K','B','N','R']
 
+    def getPieceOnSquare(self, x_i, y_i):
+        print('searching for piece on ' + str(x_i)+','+str(y_i) )
+        thisPiece = None
+        for piece in self.pieces:
+            # print(piece.type+' tpcolor:'+str(piece.color)+' tpx:'+str(piece.x)+' tpy:'+str(piece.y))
+            if piece.x == x_i and piece.y == y_i:
+                thisPiece = piece
+                break
+        return thisPiece
 # -------------------------
     # pawns are the soul of chess
     def evaluatePawn(self,pawn):        
@@ -84,6 +93,7 @@ class Board:
         print('evaluating moves for'+str(rook.color)+str(rook.type)+' (' + str(rook.x) +','+str(rook.y) + ')')
         px = rook.x
         py = rook.y
+        pcolor = rook.color
         pos = str(px)+','+str(py) # should be a tuple?
         moves = set()
         ev = {pos:moves}        
@@ -91,22 +101,57 @@ class Board:
         # - -----
         # - check for upper board edge
         i = 1        
-        while px - i > 0 :
-            print('px-i='+str(px-i))
+        while px - i >= 0 :         # - check for piece blocking
+            tx = px - i
+            thisCell = self.splitStrings[tx][py]
+            if thisCell == '.': # or opposing piece
+                moves.add( str(px-i) + ',' + str(py) )
+            else:
+                # if # is opposing piece
+                thisPiece = self.getPieceOnSquare(tx,py)
+                if thisPiece.color != rook.color:
+                    moves.add( str(tx) + ',' + str(py) )
+                break
+            i += 1
+        # down
+        i = -1        
+        while px - i <= 7 :
             tx = px - i
             thisCell = self.splitStrings[tx][py]
             if thisCell == '.':
-                moves.append( str(px-i) + ',' + str(py) )
+                moves.add( str(px-i) + ',' + str(py) )
             else:
+                thisPiece = self.getPieceOnSquare(tx,py)                
+                if thisPiece.color != rook.color:
+                    moves.add( str(tx) + ',' + str(py) )
                 break
-            i += 1
-            print(moves)
-            print('i='+str(i))
-            print('\n')
-        # - check for piece blocking
-        # down
+            i -= 1        
         # left
+        i = 1        
+        while py - i >= 0 :
+            ty = py - i
+            thisCell = self.splitStrings[px][ty]
+            if thisCell == '.':
+                moves.add( str(px) + ',' + str(ty) )
+            else:
+                thisPiece = self.getPieceOnSquare(px,ty)                
+                if thisPiece.color != rook.color:
+                    moves.add( str(px) + ',' + str(ty) )
+                break
+            i += 1        
         # right
+        i = 1        
+        while py + i <= 7 :
+            ty = py + i
+            thisCell = self.splitStrings[px][ty]
+            if thisCell == '.':
+                moves.add( str(px) + ',' + str(ty) )
+            else:
+                thisPiece = self.getPieceOnSquare(px,ty)
+                if thisPiece.color != rook.color:
+                    moves.add( str(px) + ',' + str(ty) )
+                break
+            i += 1        
         return ev
 
 # -------------------------
@@ -179,12 +224,12 @@ class Board:
 
 # -------------------------    
     def evaluateBishop(self,bishop):
-    # check all diagonals
-    # check left diagonal forward
-    # check right diagonal forward
-    # check left diagonal backward
-    # check right diagonal backward
-    # return possible moves
+        # check all diagonals
+        # check left diagonal forward
+        # check right diagonal forward
+        # check left diagonal backward
+        # check right diagonal backward
+        # return possible moves
         return None
 
 # -------------------------    
@@ -271,15 +316,33 @@ class Board:
         self.splitString = self.stringToArray()
 
 # initial board        
-b1 = Board()
-b1.piecesFromBoardStrings()
-b1.getAllPossibleMoves()
+# b1 = Board()
+# b1.piecesFromBoardStrings()
+# b1.getAllPossibleMoves()
 
 # TODO: generate board strings from pieces / moves
 # TODO: rethink data structs
 
 # TODO: test rooks possible moves
+# print('emptyRook\n-------------\n')
+# emptyRook = Board('........\n........\n...r....\n........\n........\n........\n........\n........')
+# emptyRook.piecesFromBoardStrings()
+# emptyRook.getAllPossibleMoves()
+
+# TODO: test rook taking opposing piece
+print('rookPawn\n-------------\n')
+rookPawn = Board('........\n........\n...r....\n........\n........\n........\n...P....\n........')
+rookPawn.piecesFromBoardStrings()
+rookPawn.getAllPossibleMoves()
+
+# TODO: test rook taking opposing piece
+
 # TODO: test knights possible moves
+# print('emptyKnight\n-------------\n')
+# emptyKnight = Board('........\n........\n...n....\n........\n........\n........\n........\n........')
+# emptyKnight.piecesFromBoardStrings()
+# emptyKnight.getAllPossibleMoves()
+
 # TODO: test bishops possible moves
 # TODO: test kings possible moves
 # TODO: test queens possible moves
