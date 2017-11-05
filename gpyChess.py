@@ -32,11 +32,23 @@ class Piece:
         board.y = y_i
         board.moved = False
         board.history = []
-        
-class Board:
-    pieces = list()
-#    pieces = ['p','p','p','p','p','p','p','p','r','n','b','q','k','b','n','r','P','P','P','P','P','P','P','P','R','N','B','Q','K','B','N','R']
 
+
+class Board:
+    '''
+    The board has pieces, and can generate sets of possible moves.
+    '''
+    pieces = list() # these are parsed from the init string in piecesFromBoardStrings()
+
+    # -------------------------            
+    def __init__(board, string_i = ''):
+        if string_i == '':
+            board.string = "rnbqkbnr\npppppppp\n........\n........\n........\n........\nPPPPPPPP\nRNBQKBNR"
+        else:
+            board.string = string_i
+        board.splitString = board.stringToArray()
+
+    # -------------------------            
     def getPieceOnSquare(board, x_i, y_i):
         print('searching for piece on ' + str(x_i)+','+str(y_i) )
         thisPiece = None
@@ -472,105 +484,39 @@ class Board:
                 moves.append(board.evaluateQueen(piece))
             # king
             if pType.lower() == 'k':
-                moves.append(board.evaluateKing(piece))
-            
+                moves.append(board.evaluateKing(piece))            
         for move in moves:
             print(move)
 
-    # -------------------------            
-    def __init__(board, string_i = ''):
+    def possibleChecks(board):
+        return None
+
+    def possibleChecks(board):
+        return None
+
+
+
+class Game:
+    '''
+    A Game has two players who each take turns. 
+    A Game has at least one Board.
+    A Game has turns.  (A turn is a move).
+    A Game has a winner.
+    A Game prompts for a move and turns after each move.
+    A Game checks if it is over.  
+    A Game is over if a king is mated.
+    A king is mated if it is in check and cannot get out of check.
+    A king is in check if an opposing color can capture it on the next move.
+    The Board should tell us if a king is in check.
+    '''        
+    board = Board()
+    turns = {'w':'','b':''}
+    currentTurn = 'w'
+    def __init__(game, string_i = ''):
         if string_i == '':
-            board.string = "rnbqkbnr\npppppppp\n........\n........\n........\n........\nPPPPPPPP\nRNBQKBNR"
+            print('Setting default board.')
+            board = Board("rnbqkbnr\npppppppp\n........\n........\n........\n........\nPPPPPPPP\nRNBQKBNR")
         else:
-            board.string = string_i
+            print('Setting custom board.')
+            board = Board(string_i)
         board.splitString = board.stringToArray()
-
-# initial board        
-# b1 = Board()
-# b1.piecesFromBoardStrings()
-# b1.getAllPossibleMoves()
-
-# TODO: generate board strings from pieces / moves
-# TODO: rethink data structs
-
-# -----------------------------------------------------------------------------
-# TODO:   turn the tests below into valid unit tests (use pytest or something)
-# -----------------------------------------------------------------------------
-
-# TODO: test rooks possible moves
-# print('emptyRook\n-------------\n')
-# emptyRook = Board('........\n........\n...r....\n........\n........\n........\n........\n........')
-# emptyRook.piecesFromBoardStrings()
-# emptyRook.getAllPossibleMoves()
-
-# TODO: test rook taking opposing piece
-# print('rookPawn\n-------------\n')
-# rookPawn = Board('........\n........\n...r..p.\n........\n........\n........\n...P....\n........')
-# rookPawn.piecesFromBoardStrings()
-# rookPawn.getAllPossibleMoves()
-
-# TODO: test rook taking opposing piece
-
-# TODO: test knights possible moves
-# print('emptyKnight\n-------------\n')
-# emptyKnight = Board('........\n........\n...n....\n........\n........\n........\n........\n........')
-# emptyKnight.piecesFromBoardStrings()
-# emptyKnight.getAllPossibleMoves()
-
-# TODO: test bishops possible moves
-# print('bishopPawn\n-------------\n')
-# bishopPawn = Board('........\n........\n...b..p.\n........\n........\n........\n...P....\n........')
-# bishopPawn.piecesFromBoardStrings()
-# bishopPawn.getAllPossibleMoves()
-
-# TODO: test kings possible moves
-# print('emptyKing\n-------------\n')
-# emptyKing = Board('........\n........\n...k....\n........\n........\n........\n........\n........')
-# emptyKing.piecesFromBoardStrings()
-# emptyKing.getAllPossibleMoves()
-
-# TODO: test kings possible moves on borders
-# print('emptyKing NW\n-------------\n')
-# emptyKing = Board('k.......\n........\n........\n........\n........\n........\n........\n........')
-# emptyKing.piecesFromBoardStrings()
-# emptyKing.getAllPossibleMoves()
-
-# print('emptyKing SE\n-------------\n')
-# emptyKing = Board('........\n........\n........\n........\n........\n........\n........\n.......k')
-# emptyKing.piecesFromBoardStrings()
-# emptyKing.getAllPossibleMoves()
-
-# print('emptyKing NE\n-------------\n')
-# emptyKing = Board('.......k\n........\n........\n........\n........\n........\n........\n........')
-# emptyKing.piecesFromBoardStrings()
-# emptyKing.getAllPossibleMoves()
-
-# print('emptyKing SW\n-------------\n')
-# emptyKing = Board('........\n........\n........\n........\n........\n........\n........\nk.......')
-# emptyKing.piecesFromBoardStrings()
-# emptyKing.getAllPossibleMoves()
-
-print('kingPawn opposing\n-------------\n')
-kingPawn = Board('........\n........\n........\n........\n........\n........\n.P......\n.k......')
-kingPawn.piecesFromBoardStrings()
-kingPawn.getAllPossibleMoves()
-
-print('kingPawn friendly\n-------------\n')
-kingPawn = Board('........\n........\n........\n........\n........\n........\n.p......\n.k......')
-kingPawn.piecesFromBoardStrings()
-kingPawn.getAllPossibleMoves()
-
-# TODO: test queens possible moves
-# print('queenPawn\n-------------\n')
-# queenPawn = Board('........\n........\n...q..p.\n........\n........\n........\n...P....\n........')
-# queenPawn.piecesFromBoardStrings()
-# queenPawn.getAllPossibleMoves()
-
-# TODO: test if move is check
-# TODO: test if move is mate
-
-# TODO: test pawn move - should generate new board
-# TODO: test pawn captures - should generate new board
-
-# TODO: test queen move
-# TODO: test queen captures
