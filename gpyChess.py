@@ -231,7 +231,6 @@ class Board:
         pos = str(px)+','+str(py) # should be a tuple?
         moves = set()
         ev = {pos:moves}                
-
         # check all diagonals
         # check left diagonal up
         i = 1
@@ -309,8 +308,53 @@ class Board:
 
 # -------------------------    
     def evaluateKing(self,king):
-        return None
-
+        print('evaluating moves for '+str(king.color)+str(king.type)+' (' + str(king.x)  +','+str(king.y) + ')')
+        px = king.x
+        py = king.y
+        pos = str(px)+','+str(py) # should be a tuple?
+        moves = set()
+        ev = {pos:moves}                
+        # check px-1, py (north)
+        tx = px-1
+        ty = py
+        thisCell = self.splitStrings[tx][ty]
+        if thisCell == '.':
+            moves.add( str(tx) + ',' + str(ty))
+        else:
+            thisPiece  = self.getPieceOnSquare(tx,ty)
+            if thisPiece.color != bishop.color:
+                moves.add( str(tx) + ',' + str(ty) )            
+        # check px, py+1 (east)
+        tx = px
+        ty = py+1
+        thisCell = self.splitStrings[tx][ty]
+        if thisCell == '.':
+            moves.add( str(tx) + ',' + str(ty))
+        else:
+            thisPiece  = self.getPieceOnSquare(tx,ty)
+            if thisPiece.color != bishop.color:
+                moves.add( str(tx) + ',' + str(ty) )            
+        # check px+1, py(south)
+        tx = px+1
+        ty = py
+        thisCell = self.splitStrings[tx][ty]
+        if thisCell == '.':
+            moves.add( str(tx) + ',' + str(ty))
+        else:
+            thisPiece  = self.getPieceOnSquare(tx,ty)
+            if thisPiece.color != bishop.color:
+                moves.add( str(tx) + ',' + str(ty) )            
+        # check px, py-1 (west)
+        tx = px
+        ty = py-1
+        thisCell = self.splitStrings[tx][ty]
+        if thisCell == '.':
+            moves.add( str(tx) + ',' + str(ty))
+        else:
+            thisPiece  = self.getPieceOnSquare(tx,ty)
+            if thisPiece.color != bishop.color:
+                moves.add( str(tx) + ',' + str(ty) )            
+        return ev
 # -------------------------    
     def stringToArray(self):
         splitStrings = self.string.split('\n')
@@ -371,7 +415,7 @@ class Board:
                 moves.append(self.evaluateQueen(piece))
             # king
             if pType.lower() == 'k':
-                self.evaluateKing(piece)
+                moves.append(self.evaluateKing(piece))
             
         for move in moves:
             print(move)
@@ -419,11 +463,16 @@ class Board:
 # bishopPawn.getAllPossibleMoves()
 
 # TODO: test kings possible moves
+print('kingPawn\n-------------\n')
+kingPawn = Board('........\n........\n...k....\n........\n........\n........\n........\n........')
+kingPawn.piecesFromBoardStrings()
+kingPawn.getAllPossibleMoves()
+
 # TODO: test queens possible moves
-print('queenPawn\n-------------\n')
-queenPawn = Board('........\n........\n...q..p.\n........\n........\n........\n...P....\n........')
-queenPawn.piecesFromBoardStrings()
-queenPawn.getAllPossibleMoves()
+# print('queenPawn\n-------------\n')
+# queenPawn = Board('........\n........\n...q..p.\n........\n........\n........\n...P....\n........')
+# queenPawn.piecesFromBoardStrings()
+# queenPawn.getAllPossibleMoves()
 
 # TODO: test if move is check
 # TODO: test if move is mate
