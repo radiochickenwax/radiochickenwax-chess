@@ -63,7 +63,7 @@ class Board:
         if pcolor == 'w': # go backwards            
             m = -1
         # is starting position?        
-        if not pawn.moved:         # check up 2
+        if (pcolor == 'b' and px == 1) or (pcolor == 'w' and px == 6):
             print('can move 2')
             n = 2*m
             tx = px + n
@@ -315,46 +315,103 @@ class Board:
         moves = set()
         ev = {pos:moves}                
         # check px-1, py (north)
-        tx = px-1
-        ty = py
-        thisCell = self.splitStrings[tx][ty]
-        if thisCell == '.':
-            moves.add( str(tx) + ',' + str(ty))
-        else:
-            thisPiece  = self.getPieceOnSquare(tx,ty)
-            if thisPiece.color != bishop.color:
-                moves.add( str(tx) + ',' + str(ty) )            
+        if px - 1 >= 0:
+            print('checking north')
+            tx = px-1
+            ty = py
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
+        # check px-1, py+1 (northeast)
+        if px - 1 >= 0  and  py + 1 <= 7:
+            print('checking northeast')
+            tx = px-1
+            ty = py+1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
         # check px, py+1 (east)
-        tx = px
-        ty = py+1
-        thisCell = self.splitStrings[tx][ty]
-        if thisCell == '.':
-            moves.add( str(tx) + ',' + str(ty))
-        else:
-            thisPiece  = self.getPieceOnSquare(tx,ty)
-            if thisPiece.color != bishop.color:
-                moves.add( str(tx) + ',' + str(ty) )            
+        if py+1 <= 7:
+            print('checking east')
+            tx = px
+            ty = py+1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
+        # check px+1, py+1 (southeast)
+        if px+1 <= 7 and py+1 <=7:
+            print('checking southeast')
+            tx = px+1
+            ty = py+1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
         # check px+1, py(south)
-        tx = px+1
-        ty = py
-        thisCell = self.splitStrings[tx][ty]
-        if thisCell == '.':
-            moves.add( str(tx) + ',' + str(ty))
-        else:
-            thisPiece  = self.getPieceOnSquare(tx,ty)
-            if thisPiece.color != bishop.color:
-                moves.add( str(tx) + ',' + str(ty) )            
+        if px + 1 <= 7:
+            print('checking south')
+            tx = px+1
+            ty = py
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
+        # check px+1, py-1 (southwest)
+        if px+1 <= 7 and py-1 >=0:
+            print('checking southwest')
+            tx = px+1
+            ty = py-1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
         # check px, py-1 (west)
-        tx = px
-        ty = py-1
-        thisCell = self.splitStrings[tx][ty]
-        if thisCell == '.':
-            moves.add( str(tx) + ',' + str(ty))
-        else:
-            thisPiece  = self.getPieceOnSquare(tx,ty)
-            if thisPiece.color != bishop.color:
-                moves.add( str(tx) + ',' + str(ty) )            
+        if py-1 >= 0:
+            print('checking west')
+            tx = px
+            ty = py-1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
+        # check px-1, py-1 (northwest)
+        if px-1 >=0 and py-1 >= 0:
+            print('checking northwest')
+            tx = px-1
+            ty = py-1
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != king.color:
+                    moves.add( str(tx) + ',' + str(ty) )            
         return ev
+
 # -------------------------    
     def stringToArray(self):
         splitStrings = self.string.split('\n')
@@ -436,6 +493,10 @@ class Board:
 # TODO: generate board strings from pieces / moves
 # TODO: rethink data structs
 
+# -----------------------------------------------------------------------------
+# TODO:   turn the tests below into valid unit tests (use pytest or something)
+# -----------------------------------------------------------------------------
+
 # TODO: test rooks possible moves
 # print('emptyRook\n-------------\n')
 # emptyRook = Board('........\n........\n...r....\n........\n........\n........\n........\n........')
@@ -463,8 +524,39 @@ class Board:
 # bishopPawn.getAllPossibleMoves()
 
 # TODO: test kings possible moves
-print('kingPawn\n-------------\n')
-kingPawn = Board('........\n........\n...k....\n........\n........\n........\n........\n........')
+# print('emptyKing\n-------------\n')
+# emptyKing = Board('........\n........\n...k....\n........\n........\n........\n........\n........')
+# emptyKing.piecesFromBoardStrings()
+# emptyKing.getAllPossibleMoves()
+
+# TODO: test kings possible moves on borders
+# print('emptyKing NW\n-------------\n')
+# emptyKing = Board('k.......\n........\n........\n........\n........\n........\n........\n........')
+# emptyKing.piecesFromBoardStrings()
+# emptyKing.getAllPossibleMoves()
+
+# print('emptyKing SE\n-------------\n')
+# emptyKing = Board('........\n........\n........\n........\n........\n........\n........\n.......k')
+# emptyKing.piecesFromBoardStrings()
+# emptyKing.getAllPossibleMoves()
+
+# print('emptyKing NE\n-------------\n')
+# emptyKing = Board('.......k\n........\n........\n........\n........\n........\n........\n........')
+# emptyKing.piecesFromBoardStrings()
+# emptyKing.getAllPossibleMoves()
+
+# print('emptyKing SW\n-------------\n')
+# emptyKing = Board('........\n........\n........\n........\n........\n........\n........\nk.......')
+# emptyKing.piecesFromBoardStrings()
+# emptyKing.getAllPossibleMoves()
+
+print('kingPawn opposing\n-------------\n')
+kingPawn = Board('........\n........\n........\n........\n........\n........\n.P......\n.k......')
+kingPawn.piecesFromBoardStrings()
+kingPawn.getAllPossibleMoves()
+
+print('kingPawn friendly\n-------------\n')
+kingPawn = Board('........\n........\n........\n........\n........\n........\n.p......\n.k......')
 kingPawn.piecesFromBoardStrings()
 kingPawn.getAllPossibleMoves()
 
