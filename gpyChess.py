@@ -46,6 +46,7 @@ class Board:
                 thisPiece = piece
                 break
         return thisPiece
+
 # -------------------------
     # pawns are the soul of chess
     def evaluatePawn(self,pawn):        
@@ -224,13 +225,76 @@ class Board:
 
 # -------------------------    
     def evaluateBishop(self,bishop):
+        print('evaluating moves for '+str(bishop.color)+str(bishop.type)+' (' + str(bishop.x)  +','+str(bishop.y) + ')')
+        px = bishop.x
+        py = bishop.y
+        pos = str(px)+','+str(py) # should be a tuple?
+        moves = set()
+        ev = {pos:moves}                
+
         # check all diagonals
-        # check left diagonal forward
-        # check right diagonal forward
-        # check left diagonal backward
-        # check right diagonal backward
+        # check left diagonal up
+        i = 1
+        while px - i >= 0 and py - i >= 0 :         # - check for piece blocking
+            tx = px - i
+            ty = py - i
+            #print('tx:'+str(tx)+', ty:'+str(ty)+' moves:'+str(ev))
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != bishop.color:
+                    moves.add( str(tx) + ',' + str(ty) )
+                break
+            i+=1
+        # check right diagonal up
+        i = 1
+        while px - i >= 0 and py + i <= 7 :         # - check for piece blocking
+            tx = px - i
+            ty = py + i
+            #print('tx:'+str(tx)+', ty:'+str(ty)+' moves:'+str(ev))
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != bishop.color:
+                    moves.add( str(tx) + ',' + str(ty) )
+                break
+            i+=1
+        # check left diagonal down
+        i = 1
+        while px + i <= 7 and py - i >= 0 :         # - check for piece blocking
+            tx = px + i
+            ty = py - i
+            #print('tx:'+str(tx)+', ty:'+str(ty)+' moves:'+str(ev))
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != bishop.color:
+                    moves.add( str(tx) + ',' + str(ty) )
+                break
+            i+=1
+        # check right diagonal down
+        i = 1
+        while px + i <= 7 and py + i <= 7 :         # - check for piece blocking
+            tx = px + i
+            ty = py + i
+            #print('tx:'+str(tx)+', ty:'+str(ty)+' moves:'+str(ev))
+            thisCell = self.splitStrings[tx][ty]
+            if thisCell == '.':
+                moves.add( str(tx) + ',' + str(ty))
+            else:
+                thisPiece  = self.getPieceOnSquare(tx,ty)
+                if thisPiece.color != bishop.color:
+                    moves.add( str(tx) + ',' + str(ty) )
+                break
+            i+=1
         # return possible moves
-        return None
+        return ev
 
 # -------------------------    
     def evaluateQueen(self,queen):
@@ -294,8 +358,7 @@ class Board:
                 moves.append(self.evaluateKnight(piece))
             # bishop
             if pType.lower() == 'b':
-                self.evaluateBishop(piece)
-
+                moves.append(self.evaluateBishop(piece))
             # queen
             if pType.lower() == 'q':
                 self.evaluateQueen(piece)
@@ -330,10 +393,10 @@ class Board:
 # emptyRook.getAllPossibleMoves()
 
 # TODO: test rook taking opposing piece
-print('rookPawn\n-------------\n')
-rookPawn = Board('........\n........\n...r....\n........\n........\n........\n...P....\n........')
-rookPawn.piecesFromBoardStrings()
-rookPawn.getAllPossibleMoves()
+# print('rookPawn\n-------------\n')
+# rookPawn = Board('........\n........\n...r..p.\n........\n........\n........\n...P....\n........')
+# rookPawn.piecesFromBoardStrings()
+# rookPawn.getAllPossibleMoves()
 
 # TODO: test rook taking opposing piece
 
@@ -344,6 +407,11 @@ rookPawn.getAllPossibleMoves()
 # emptyKnight.getAllPossibleMoves()
 
 # TODO: test bishops possible moves
+print('bishopPawn\n-------------\n')
+bishopPawn = Board('........\n........\n...b..p.\n........\n........\n........\n...P....\n........')
+bishopPawn.piecesFromBoardStrings()
+bishopPawn.getAllPossibleMoves()
+
 # TODO: test kings possible moves
 # TODO: test queens possible moves
 
