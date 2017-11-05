@@ -298,7 +298,14 @@ class Board:
 
 # -------------------------    
     def evaluateQueen(self,queen):
-        return None
+        print('evaluating moves for '+str(queen.color)+str(queen.type)+' (' + str(queen.x)  +','+str(queen.y) + ')')
+        px = queen.x
+        py = queen.y
+        pos = str(px)+','+str(py) # should be a tuple?
+        bishopStyleMoves = self.evaluateBishop(queen)[pos]
+        rookStyleMoves = self.evaluateRook(queen)[pos]
+        ev = {pos: bishopStyleMoves | rookStyleMoves}
+        return ev
 
 # -------------------------    
     def evaluateKing(self,king):
@@ -361,8 +368,7 @@ class Board:
                 moves.append(self.evaluateBishop(piece))
             # queen
             if pType.lower() == 'q':
-                self.evaluateQueen(piece)
-
+                moves.append(self.evaluateQueen(piece))
             # king
             if pType.lower() == 'k':
                 self.evaluateKing(piece)
@@ -407,13 +413,17 @@ class Board:
 # emptyKnight.getAllPossibleMoves()
 
 # TODO: test bishops possible moves
-print('bishopPawn\n-------------\n')
-bishopPawn = Board('........\n........\n...b..p.\n........\n........\n........\n...P....\n........')
-bishopPawn.piecesFromBoardStrings()
-bishopPawn.getAllPossibleMoves()
+# print('bishopPawn\n-------------\n')
+# bishopPawn = Board('........\n........\n...b..p.\n........\n........\n........\n...P....\n........')
+# bishopPawn.piecesFromBoardStrings()
+# bishopPawn.getAllPossibleMoves()
 
 # TODO: test kings possible moves
 # TODO: test queens possible moves
+print('queenPawn\n-------------\n')
+queenPawn = Board('........\n........\n...q..p.\n........\n........\n........\n...P....\n........')
+queenPawn.piecesFromBoardStrings()
+queenPawn.getAllPossibleMoves()
 
 # TODO: test if move is check
 # TODO: test if move is mate
