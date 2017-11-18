@@ -1,5 +1,5 @@
 import sys
-
+import pprint
 # pieces are what?
 # an array of type piece
 
@@ -39,20 +39,27 @@ class Board:
     The board has pieces, and can generate sets of possible moves.
     '''
     pieces = list() # these are parsed from the init string in piecesFromBoardStrings()
-    moves = list()
+    pieceCoordinates = dict()
+    moves = dict()
+    wMoves = dict()
+    bMoves = dict()        
     turns = {'w':'','b':''}
     currentTurn = 'w'    
+    pprinter = pprint.PrettyPrinter(indent=4)
     # -------------------------            
     def __init__(board, string_i = ''):
+        #pprinter = pprint.PrettyPrinter(indent=4)
         if string_i == '':
             board.string = "rnbqkbnr\npppppppp\n........\n........\n........\n........\nPPPPPPPP\nRNBQKBNR"
         else:
             board.string = string_i
         board.splitString = board.stringToArray()
+        board.piecesFromBoardStrings()          # generate pieces 
+        board.getAllPossibleMoves()             # generate moves
 
     # -------------------------            
     def getPieceOnSquare(board, x_i, y_i):
-        print('searching for piece on ' + str(x_i)+','+str(y_i) )
+        # print('searching for piece on ' + str(x_i)+','+str(y_i) )
         thisPiece = None
         for piece in board.pieces:
             # print(piece.type+' tpcolor:'+str(piece.color)+' tpx:'+str(piece.x)+' tpy:'+str(piece.y))
@@ -64,7 +71,7 @@ class Board:
 # -------------------------
     # pawns are the soul of chess
     def evaluatePawn(board,pawn):        
-        print('evaluating moves for '+str(pawn.color)+str(pawn.type)+' (' + str(pawn.x) +','+str(pawn.y) + ')')
+        # print('evaluating moves for '+str(pawn.color)+str(pawn.type)+' (' + str(pawn.x) +','+str(pawn.y) + ')')
         # make a dict: {pos: set(moves)}
         px = pawn.x
         py = pawn.y
@@ -78,7 +85,7 @@ class Board:
             m = -1
         # is starting position?        
         if (pcolor == 'b' and px == 1) or (pcolor == 'w' and px == 6):
-            print('can move 2')
+            #print('can move 2')
             n = 2*m
             tx = px + n
             thisCell = board.splitStrings[tx][py]
@@ -100,12 +107,12 @@ class Board:
             moves.add( str(tx) + ',' + str(ty) )                    
         # check right diagonal
         # check en passant
-        print(ev)
+        # print(ev)
         return ev
 
 # -------------------------    
     def evaluateRook(board,rook):
-        print('evaluating moves for'+str(rook.color)+str(rook.type)+' (' + str(rook.x) +','+str(rook.y) + ')')
+        # print('evaluating moves for'+str(rook.color)+str(rook.type)+' (' + str(rook.x) +','+str(rook.y) + ')')
         px = rook.x
         py = rook.y
         pcolor = rook.color
@@ -116,7 +123,7 @@ class Board:
         # - -----
         # - check for upper board edge
         i = 1        
-        while px - i >= 0 :         # - check for piece blocking
+        while px - i >= 0:         # - check for piece blocking
             tx = px - i
             thisCell = board.splitStrings[tx][py]
             if thisCell == '.': # or opposing piece
@@ -171,7 +178,7 @@ class Board:
 
 # -------------------------
     def evaluateKnight(board,knight):
-        print('evaluating moves for '+str(knight.color)+str(knight.type)+' (' + str(knight.x)  +','+str(knight.y) + ')')
+        # print('evaluating moves for '+str(knight.color)+str(knight.type)+' (' + str(knight.x)  +','+str(knight.y) + ')')
         px = knight.x
         py = knight.y
         pos = str(px)+','+str(py) # should be a tuple?
@@ -234,12 +241,12 @@ class Board:
         if tx <= 7 and ty <= 7: # check if square is empty or opposing
             if board.splitStrings[tx][ty] == '.': # or opposing
                 moves.add( str(tx) + ',' + str(ty))
-        print(ev)
+        # print(ev)
         return ev
 
 # -------------------------    
     def evaluateBishop(board,bishop):
-        print('evaluating moves for '+str(bishop.color)+str(bishop.type)+' (' + str(bishop.x)  +','+str(bishop.y) + ')')
+        # print('evaluating moves for '+str(bishop.color)+str(bishop.type)+' (' + str(bishop.x)  +','+str(bishop.y) + ')')
         px = bishop.x
         py = bishop.y
         pos = str(px)+','+str(py) # should be a tuple?
@@ -311,7 +318,7 @@ class Board:
 
 # -------------------------    
     def evaluateQueen(board,queen):
-        print('evaluating moves for '+str(queen.color)+str(queen.type)+' (' + str(queen.x)  +','+str(queen.y) + ')')
+        # print('evaluating moves for '+str(queen.color)+str(queen.type)+' (' + str(queen.x)  +','+str(queen.y) + ')')
         px = queen.x
         py = queen.y
         pos = str(px)+','+str(py) # should be a tuple?
@@ -322,7 +329,7 @@ class Board:
 
 # -------------------------    
     def evaluateKing(board,king):
-        print('evaluating moves for '+str(king.color)+str(king.type)+' (' + str(king.x)  +','+str(king.y) + ')')
+        # print('evaluating moves for '+str(king.color)+str(king.type)+' (' + str(king.x)  +','+str(king.y) + ')')
         px = king.x
         py = king.y
         pos = str(px)+','+str(py) # should be a tuple?
@@ -330,7 +337,7 @@ class Board:
         ev = {pos:moves}                
         # check px-1, py (north)
         if px - 1 >= 0:
-            print('checking north')
+            # print('checking north')
             tx = px-1
             ty = py
             thisCell = board.splitStrings[tx][ty]
@@ -342,7 +349,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px-1, py+1 (northeast)
         if px - 1 >= 0  and  py + 1 <= 7:
-            print('checking northeast')
+            # print('checking northeast')
             tx = px-1
             ty = py+1
             thisCell = board.splitStrings[tx][ty]
@@ -354,7 +361,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px, py+1 (east)
         if py+1 <= 7:
-            print('checking east')
+            #print('checking east')
             tx = px
             ty = py+1
             thisCell = board.splitStrings[tx][ty]
@@ -366,7 +373,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px+1, py+1 (southeast)
         if px+1 <= 7 and py+1 <=7:
-            print('checking southeast')
+            #print('checking southeast')
             tx = px+1
             ty = py+1
             thisCell = board.splitStrings[tx][ty]
@@ -378,7 +385,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px+1, py(south)
         if px + 1 <= 7:
-            print('checking south')
+            # print('checking south')
             tx = px+1
             ty = py
             thisCell = board.splitStrings[tx][ty]
@@ -390,7 +397,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px+1, py-1 (southwest)
         if px+1 <= 7 and py-1 >=0:
-            print('checking southwest')
+            # print('checking southwest')
             tx = px+1
             ty = py-1
             thisCell = board.splitStrings[tx][ty]
@@ -402,7 +409,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px, py-1 (west)
         if py-1 >= 0:
-            print('checking west')
+            # print('checking west')
             tx = px
             ty = py-1
             thisCell = board.splitStrings[tx][ty]
@@ -414,7 +421,7 @@ class Board:
                     moves.add( str(tx) + ',' + str(ty) )            
         # check px-1, py-1 (northwest)
         if px-1 >=0 and py-1 >= 0:
-            print('checking northwest')
+            # print('checking northwest')
             tx = px-1
             ty = py-1
             thisCell = board.splitStrings[tx][ty]
@@ -433,11 +440,13 @@ class Board:
         for i in range(len(splitStrings)):
             board.splitStrings.append(list(splitStrings[i]))
             
+# -------------------------    
     def boardArrayToString(board):
         board.string = ''
         for i in range(len(board.splitStrings)):
             board.string += ''.join(board.splitStrings[i])+'\n'
 
+# -------------------------    
     def piecesFromBoardStrings(board):
         ss = board.splitStrings
         board.pieces = list()
@@ -452,45 +461,94 @@ class Board:
                         color = 'w'
                     board.pieces.append( Piece( ss[i][j], color, i, j ) )
 
+# -------------------------    
     def printPieces(board):
         for piece in board.pieces:
             pType = piece.type
             px = piece.x
             py = piece.y
             pcolor = piece.color
-            print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
+            # print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
 
-    # -------------------------
+# -------------------------
     def getAllPossibleMoves(board):
-        moves = list()
         for piece in board.pieces:
             pType = piece.type
             px = piece.x
             py = piece.y
             pcolor = piece.color
-            print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
+            board.pieceCoordinates[str(px)+','+str(py)] = piece
+            # print('type: '+pType+' color:'+pcolor+' x:'+str(px)+' y:'+str(py))
             # pawn
             if pType.lower() == 'p':
-                moves.append(board.evaluatePawn(piece))
+                pawnMoves = board.evaluatePawn(piece)
+                if pcolor == 'w':
+                    board.wMoves.update(pawnMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(pawnMoves)                    
+                board.moves.update(pawnMoves)
             # rook
             if pType.lower() == 'r':
-                moves.append(board.evaluateRook(piece))
+                rookMoves = board.evaluateRook(piece)                
+                if pcolor == 'w':
+                    board.wMoves.update(rookMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(rookMoves)                    
+                board.moves.update(rookMoves)
             # knight
             if pType.lower() == 'n':
-                moves.append(board.evaluateKnight(piece))
+                knightMoves = board.evaluateKnight(piece)                                
+                if pcolor == 'w':
+                    board.wMoves.update(knightMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(knightMoves)                    
+                board.moves.update(knightMoves)
             # bishop
             if pType.lower() == 'b':
-                moves.append(board.evaluateBishop(piece))
+                bishopMoves = board.evaluateBishop(piece)                                
+                if pcolor == 'w':
+                    board.wMoves.update(bishopMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(bishopMoves)                    
+                board.moves.update(bishopMoves)
             # queen
             if pType.lower() == 'q':
-                moves.append(board.evaluateQueen(piece))
+                queenMoves = board.evaluateQueen(piece)                                
+                if pcolor == 'w':
+                    board.wMoves.update(queenMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(queenMoves)                    
+                board.moves.update(queenMoves)                
             # king
             if pType.lower() == 'k':
-                moves.append(board.evaluateKing(piece))            
-        for move in moves:
-            print(move)
-        board.moves = moves
+                kingMoves = board.evaluateKing(piece)                                
+                if pcolor == 'w':
+                    board.wMoves.update(kingMoves)
+                if pcolor == 'b':
+                    board.bMoves.update(kingMoves)                    
+                board.moves.update(kingMoves)
+        #for move in moves:
+        #    print(move)
+        board.pprinter.pprint(board.moves)
+        #board.moves = moves
 
+# -------------------------    
+    def filterMovesByColor(board,color):
+        '''
+        Return only the moves available for the given color
+        '''
+        for move in board.moves:
+            #pp.pprint(move)]
+            print('-----------\n'+str(move))
+            print(board.moves[move])
+            print('-----------')
+        #board.moves = moves
+
+# -------------------------    
+    def possibleChecks(board):
+        return None
+
+# -------------------------    
     def move(board, startEnd):
         '''
         Process a move.  
@@ -498,31 +556,54 @@ class Board:
         It should be (a-h)(1-8) : (a-h)(1-8) - but not using that notation yet.
         If it is valid, alter the board to suit.  If it is invalid return the string "invalid".
         '''
-        print('moving')
+        #print('moving')
+        print(board.string)
         startEndSplit = startEnd.split(',')
         if len(startEndSplit) != 4:
             print('wrong number of args')
             return None
         # get first coordinate        
         sx_sy = str(startEndSplit[0])+','+str(startEndSplit[1])
-        
-        # get 2nd coordinate
-        ex_ey = str(startEndSplit[2])+','+str(startEndSplit[3])
-        # get all possible moves
-        self.moves = board.getAllPossibleMoves()
+        print('got starting position: '+sx_sy)
+        turn = board.currentTurn
+
+        # verify sx_sy is correct turn piece (color)
+        # need to get piece from coordinate
+
+        pieceToMove = None
+        if sx_sy in list(board.pieceCoordinates.keys()):
+            pieceToMove = board.pieceCoordinates[sx_sy]
+            if pieceToMove.color == turn: # we're ok
+                # get 2nd coordinate
+                ex_ey = str(startEndSplit[2])+','+str(startEndSplit[3])
+                print('got ending position: '+ex_ey)
+                # get all possible moves
+                board.piecesFromBoardStrings()  # generate split strings
+                board.getAllPossibleMoves()     # generate possible moves
+                if sx_sy in list(board.moves.keys()):
+                    setOfMoves = board.moves[sx_sy]
+                    if ex_ey in setOfMoves:
+                        if ex_ey in list(board.pieceCoordinates.keys()):
+                            pieceToCapture = board.pieceCoordinates[ex_ey]
+                            if pieceToCapture.color != turn:
+                                # capture pieceToCapture (remove from board.pieces)
+                                del board.pieces[ex_ey]
+                                # set coord for pieceToMove to ex_ey
+                                # set square for sx_sy to '.'
+                                # regenerate boards with new positions
+                        else: # endpos is empty therefore valid
+                            # set coord for pieceToMove to ex_ey
+                            # set square for pieceToMove to '.'
+                            # regenerate boards with new positions                            
+                        return True
+                #validMoves = list(
         # filter checks - if the king is in check, don't get all possible moves, only moves that remove the check        
         # if the move is in the possible moves list, alter the board split strings
         # alter the board string to match the split strings
         
-        return None
+        return False
     
-    def possibleChecks(board):
-        '''
-        '''
-        return None
-
-    def possibleChecks(board):
-        return None
+# -------------------------    
 
 
 
