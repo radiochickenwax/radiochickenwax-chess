@@ -39,7 +39,9 @@ class Board:
     The board has pieces, and can generate sets of possible moves.
     '''
     pieces = list() # these are parsed from the init string in piecesFromBoardStrings()
-
+    moves = list()
+    turns = {'w':'','b':''}
+    currentTurn = 'w'    
     # -------------------------            
     def __init__(board, string_i = ''):
         if string_i == '':
@@ -487,8 +489,36 @@ class Board:
                 moves.append(board.evaluateKing(piece))            
         for move in moves:
             print(move)
+        board.moves = moves
 
+    def move(board, startEnd):
+        '''
+        Process a move.  
+        A move is a starting point and an ending point. (startEnd).
+        It should be (a-h)(1-8) : (a-h)(1-8) - but not using that notation yet.
+        If it is valid, alter the board to suit.  If it is invalid return the string "invalid".
+        '''
+        print('moving')
+        startEndSplit = startEnd.split(',')
+        if len(startEndSplit) != 4:
+            print('wrong number of args')
+            return None
+        # get first coordinate        
+        sx_sy = str(startEndSplit[0])+','+str(startEndSplit[1])
+        
+        # get 2nd coordinate
+        ex_ey = str(startEndSplit[2])+','+str(startEndSplit[3])
+        # get all possible moves
+        self.moves = board.getAllPossibleMoves()
+        # filter checks - if the king is in check, don't get all possible moves, only moves that remove the check        
+        # if the move is in the possible moves list, alter the board split strings
+        # alter the board string to match the split strings
+        
+        return None
+    
     def possibleChecks(board):
+        '''
+        '''
         return None
 
     def possibleChecks(board):
@@ -510,12 +540,10 @@ class Game:
     The Board should tell us if a king is in check.
     '''        
     board = Board()
-    turns = {'w':'','b':''}
-    currentTurn = 'w'
     def __init__(game, string_i = ''):
         if string_i == '':
             print('Setting default board.')
-            board = Board("rnbqkbnr\npppppppp\n........\n........\n........\n........\nPPPPPPPP\nRNBQKBNR")
+            board = Board()
         else:
             print('Setting custom board.')
             board = Board(string_i)
